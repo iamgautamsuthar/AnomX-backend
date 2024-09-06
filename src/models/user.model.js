@@ -25,9 +25,16 @@ const userSchema = mongoose.Schema(
     { timestamps: true }
 );
 
-userSchema.pre('save', function async(next) {
-    if (!this.isModified('password')) return next();
-    this.password = bcrypt.hash(this.password, 10);
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) {
+        console.log('RETURNED FROM IF');
+        return next();
+    }
+
+    console.log('before hash', this.password);
+
+    this.password = await bcrypt.hash(this.password, 10);
+    console.log('after hash', this.password);
     next();
 });
 

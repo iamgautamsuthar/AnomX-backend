@@ -35,26 +35,47 @@ const getAllPosts = async (req, res) => {
     }
 };
 
+// * Get Post
+const getPost = async (req, res) => {
+    try {
+        const posts = Post.find({ user_id: user_id });
+        res.json({
+            message: 'Successful',
+            posts,
+        });
+    } catch (error) {
+        res.status(400).json({
+            error: error.message,
+        });
+    }
+};
+
 // * like
 const addLike = async (req, res) => {
     const { post_id, like } = req.body;
 
     const incrementValue = like ? 1 : -1;
 
-    const updatedPost = await Post.findByIdAndUpdate(
-        post_id,
-        {
-            $inc: { likes_count: incrementValue },
-        },
-        {
-            new: true,
-            runValidators: true,
+    try {
+        const updatedPost = await Post.findByIdAndUpdate(
+            post_id,
+            {
+                $inc: { likes_count: incrementValue },
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+        if (updatedPost.likes_count < 0) {
+            updatedPost.likes_count = 0;
+            await updatedPost.save();
         }
-    );
-    if (updatedPost.likes_count < 0) {
-        updatedPost.likes_count = 0;
-        await updatedPost.save();
+    } catch (error) {
+        res.status(400).json({
+            error: error.message,
+        });
     }
 };
 
-module.exports = { createPost, getAllPosts, addLike };
+module.exports = { createPost, getAllPosts, addLike, getPost };

@@ -38,6 +38,7 @@ const getAllPosts = async (req, res) => {
 // * Get Post
 const getPost = async (req, res) => {
     try {
+        const { user_id } = req.body;
         const posts = Post.find({ user_id: user_id });
         res.json({
             message: 'Successful',
@@ -50,7 +51,7 @@ const getPost = async (req, res) => {
     }
 };
 
-// * like
+// * Like
 const addLike = async (req, res) => {
     const { post_id, like } = req.body;
 
@@ -78,4 +79,25 @@ const addLike = async (req, res) => {
     }
 };
 
-module.exports = { createPost, getAllPosts, addLike, getPost };
+// * Delete Post
+const deletePost = async (req, res) => {
+    try {
+        const { post_id } = req.body;
+        const deletedPost = Post.findByIdAndDelete(post_id);
+
+        if (!deletedPost) {
+            return res.status(400).json({ message: 'Post not found' });
+        }
+
+        res.status(200).json({
+            message: 'Post deleted successfully',
+            post: deletedPost,
+        });
+    } catch (error) {
+        res.status(400).json({
+            error: error.message,
+        });
+    }
+};
+
+module.exports = { createPost, getAllPosts, addLike, getPost, deletePost };

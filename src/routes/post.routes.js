@@ -4,9 +4,11 @@ const router = Router();
 const {
     createPost,
     getAllPosts,
+    addLike,
 } = require('../controllers/post.controller.js');
 
 router.route('/add').post(jwtMiddleware, createPost);
 router.route('/all').get(getAllPosts);
+router.route('/like').post(addLike);
 
 module.exports = router;

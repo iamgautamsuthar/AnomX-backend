@@ -19,7 +19,6 @@ const createPost = async (req, res) => {
 };
 
 // * Get All Posts
-
 const getAllPosts = async (req, res) => {
     try {
         const posts = Post.find()
@@ -36,4 +35,26 @@ const getAllPosts = async (req, res) => {
     }
 };
 
-module.exports = { createPost, getAllPosts };
+// * like
+const addLike = async (req, res) => {
+    const { post_id, like } = req.body;
+
+    const incrementValue = like ? 1 : -1;
+
+    const updatedPost = await Post.findByIdAndUpdate(
+        post_id,
+        {
+            $inc: { likes_count: incrementValue },
+        },
+        {
+            new: true,
+            runValidators: true,
+        }
+    );
+    if (updatedPost.likes_count < 0) {
+        updatedPost.likes_count = 0;
+        await updatedPost.save();
+    }
+};
+
+module.exports = { createPost, getAllPosts, addLike };

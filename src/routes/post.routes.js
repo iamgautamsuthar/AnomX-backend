@@ -1,6 +1,5 @@
 const Router = require('express');
 const jwtMiddleware = require('../middlewares/jwt.middleware.js');
-const router = Router();
 const {
     createPost,
     getAllPosts,
@@ -10,11 +9,14 @@ const {
     addComment,
 } = require('../controllers/post.controller.js');
 
-router.route('/add').post(jwtMiddleware, createPost);
-router.route('/get').get(jwtMiddleware, getPost);
-router.route('/all').get(getAllPosts);
-router.route('/like').put(addLike);
-router.route('/delete').delete(deletePost);
-router.route('/comment/add').post(jwtMiddleware, addComment);
+const router = Router();
+// * ROUTES
+
+router.route('/add').post(jwtMiddleware, createPost); // Add post
+router.route('/get').get(jwtMiddleware, getPost); // Send posts according to user_id
+router.route('/all').get(getAllPosts); // Send all posts
+router.route('/like').put(addLike); // Add or remove like to  post
+router.route('/delete').delete(deletePost); // Delete post
+router.route('/comment').post(jwtMiddleware, addComment); // Add comment to post
 
 module.exports = router;

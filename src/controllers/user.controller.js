@@ -3,32 +3,25 @@ const User = require('../models/user.model.js');
 // * Add user
 const addUser = async (req, res) => {
     const { name, username, password } = req.body;
+
+    // * Check Name, Username, Password
     if (!name || !username || !password) {
         return res.status(400).json({
-            message: 'Name Username Password required',
+            message: 'Name, username and password are required',
         });
     }
     try {
         const user = new User({ name, username, password });
 
-        // * Validate Data
-        // for (key in user) {
-        //     if (!user[key]) {
-        //         res.status(400).json({
-        //             message: `${key} required`,
-        //         });
-        //     }
-        // }
-
         // * Save data
         await user.save();
-        res.status(200).json({
-            message: 'user added successfully',
+        res.status(201).json({
+            message: 'User added successfully',
             data: user,
         });
     } catch (error) {
-        res.status(400).json({
-            message: 'dafol',
+        res.status(500).json({
+            message: 'An error occurred while adding the user.',
             error: error.message,
         });
     }
@@ -40,11 +33,12 @@ const getAllUser = async (req, res) => {
         // * Remove password field
         const users = await User.find().select('-password');
         res.status(200).json({
-            message: 'data fetched successfully',
+            message: 'Data fetched successfully',
             data: users,
         });
     } catch (error) {
-        res.status(400).json({
+        res.status(500).json({
+            message: 'An error occurred while fetching user data',
             error: error.message,
         });
     }

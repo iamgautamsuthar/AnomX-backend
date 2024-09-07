@@ -1,21 +1,29 @@
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const jwtMiddleware = (req, res, next) => {
+const jwtMiddleware = async (req, res, next) => {
+    // * Extracting token from header
     const token = req.headers['authorization']?.split(' ')[1];
 
+    // * Check if token exists or not
     if (!token) {
-        return res.status(400).json({ message: 'Token missing or invalid' });
+        return res.status(401).json({
+            message: 'Authentication token is missing.',
+        });
     }
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        console.log(decoded.user_id);
         req.body.user_id = decoded.user_id;
         next();
-    } catch (err) {
-        return res.status(400).json({ message: 'Token is invalid' });
+    } catch (error) {
+        return res.status(401).json({
+            message: 'Authentication token is invalid.',
+        });
     }
 };
 
 module.exports = jwtMiddleware;
+
+// const { username } = await User.findById(decoded.user_id);
+// console.log(`User created : ${username}`);

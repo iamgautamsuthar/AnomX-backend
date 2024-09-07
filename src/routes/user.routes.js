@@ -3,7 +3,9 @@ const { addUser, getAllUser } = require('../controllers/user.controller.js');
 
 const router = Router();
 
-router.route('/add').post(addUser);
-router.route('/all').get(getAllUser);
+// * ROUTES
+
+router.route('/add').post(addUser); // Add User
+router.route('/all').get(getAllUser); // Send all Users
 
 module.exports = router;

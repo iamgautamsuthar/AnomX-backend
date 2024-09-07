@@ -22,8 +22,12 @@ const createPost = async (req, res) => {
 // * Get All Posts
 const getAllPosts = async (req, res) => {
     try {
-        const posts = await Post.find()
+        const posts = await Post.find({})
             .populate('user_id', 'name username photo_url')
+            .populate({
+                path: 'comments.user_id',
+                select: 'name username photo_url',
+            })
             .exec();
         res.status(200).json({
             message: 'successful',
@@ -40,10 +44,16 @@ const getAllPosts = async (req, res) => {
 const getPost = async (req, res) => {
     const { user_id } = req.body;
     try {
-        const posts = Post.find({ user_id: user_id });
+        const posts = Post.find({ user_id: user_id })
+            .populate('user_id', 'name username photo_url')
+            .populate({
+                path: 'comments.user_id',
+                select: 'name username photo_url',
+            })
+            .exec();
         res.json({
             message: 'Successful',
-            posts,
+            data: posts,
         });
     } catch (error) {
         res.status(400).json({
@@ -101,4 +111,40 @@ const deletePost = async (req, res) => {
     }
 };
 
-module.exports = { createPost, getAllPosts, addLike, getPost, deletePost };
+// * Add comment
+const addComment = async (req, res) => {
+    const { user_id, comment, post_id } = req.body;
+    if (!user_id || !comment || !post_id) {
+        return res.status(400).json({
+            message: 'Comment and Post id required',
+        });
+    }
+
+    try {
+        const post = await Post.findById(post_id);
+        const newComment = {
+            user_id,
+            comment,
+            createdAt: new Date(),
+        };
+
+        post.comments.push(newComment);
+        await post.save();
+
+        res.status(200).json({
+            message: 'Comment added successfully',
+            data: post,
+        });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+module.exports = {
+    createPost,
+    getAllPosts,
+    addLike,
+    getPost,
+    deletePost,
+    addComment,
+};

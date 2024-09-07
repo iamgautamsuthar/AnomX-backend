@@ -37,8 +37,8 @@ const getAllPosts = async (req, res) => {
 
 // * Get Post
 const getPost = async (req, res) => {
+    const { user_id } = req.body;
     try {
-        const { user_id } = req.body;
         const posts = Post.find({ user_id: user_id });
         res.json({
             message: 'Successful',
@@ -81,8 +81,8 @@ const addLike = async (req, res) => {
 
 // * Delete Post
 const deletePost = async (req, res) => {
+    const { post_id } = req.body;
     try {
-        const { post_id } = req.body;
         const deletedPost = Post.findByIdAndDelete(post_id);
 
         if (!deletedPost) {

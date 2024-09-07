@@ -31,10 +31,10 @@ userSchema.pre('save', async function (next) {
         return next();
     }
 
-    console.log('before hash', this.password);
+    // console.log('before hash', this.password);
 
     this.password = await bcrypt.hash(this.password, 10);
-    console.log('after hash', this.password);
+    // console.log('after hash', this.password);
     next();
 });
 

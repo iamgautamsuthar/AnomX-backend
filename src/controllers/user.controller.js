@@ -2,18 +2,23 @@ const User = require('../models/user.model.js');
 
 // * Add user
 const addUser = async (req, res) => {
-    const { name, username, password, photo_url } = req.body;
+    const { name, username, password } = req.body;
+    if (!name || !username || !password) {
+        return res.status(400).json({
+            message: 'Name Username Password required',
+        });
+    }
     try {
-        const user = new User({ name, username, password, photo_url });
+        const user = new User({ name, username, password });
 
         // * Validate Data
-        for (key in user) {
-            if (!user[key]) {
-                res.status(400).json({
-                    message: `${key} required`,
-                });
-            }
-        }
+        // for (key in user) {
+        //     if (!user[key]) {
+        //         res.status(400).json({
+        //             message: `${key} required`,
+        //         });
+        //     }
+        // }
 
         // * Save data
         await user.save();
@@ -23,6 +28,7 @@ const addUser = async (req, res) => {
         });
     } catch (error) {
         res.status(400).json({
+            message: 'dafol',
             error: error.message,
         });
     }

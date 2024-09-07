@@ -10,7 +10,8 @@ const jwtMiddleware = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        req.user_id = decoded.user_id;
+        console.log(decoded.user_id);
+        req.body.user_id = decoded.user_id;
         next();
     } catch (err) {
         return res.status(400).json({ message: 'Token is invalid' });

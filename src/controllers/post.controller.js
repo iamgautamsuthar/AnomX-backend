@@ -3,8 +3,9 @@ const Post = require('../models/post.model.js');
 // * Create a Post
 const createPost = async (req, res) => {
     const { user_id, content } = req.body;
+    console.log(user_id);
     if (!user_id || !content) {
-        res.status(400).json({ message: 'Content required' });
+        return res.status(400).json({ message: 'Content required' });
     }
     try {
         const post = new Post({ user_id, content });
@@ -21,12 +22,12 @@ const createPost = async (req, res) => {
 // * Get All Posts
 const getAllPosts = async (req, res) => {
     try {
-        const posts = Post.find()
+        const posts = await Post.find()
             .populate('user_id', 'name username photo_url')
             .exec();
         res.status(200).json({
             message: 'successful',
-            posts,
+            data: posts,
         });
     } catch (error) {
         res.status(400).json({
